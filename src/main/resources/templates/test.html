@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>Podaj dane do testu:</h1>
+<form th:action="@{/}" method="post" th:object="${userE}">
+    <input type="text" name="symulartionName" th:field="*{n}">
+    <input type="number" th:name="populationNr" th:field="*{p}">
+    <input type="number" th:name="iloscZarazonych">
+    <input type="number" th:name="wskaznikR">
+    <input type="number" th:name="smiertelnosc">
+    <input type="number" th:name="dniDoWyzdrowienia">
+    <input type="number" th:name="dniDoSmierci">
+    <input type="number" th:name="dniSymulacji">
+    <button type="submit">zapisz</button>
+</form>
+</body>
+</html>
