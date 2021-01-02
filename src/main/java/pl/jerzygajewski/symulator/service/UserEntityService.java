@@ -1,14 +1,13 @@
 package pl.jerzygajewski.symulator.service;
 
 import org.springframework.stereotype.Service;
-import pl.jerzygajewski.symulator.entity.UserEntity;
+import pl.jerzygajewski.symulator.entity.User;
 import pl.jerzygajewski.symulator.repository.UserRepository;
-import pl.jerzygajewski.symulator.service.interfaces.UserEntityInterface;
 
 import java.util.List;
 
 @Service
-public class UserEntityService implements UserEntityInterface {
+public class UserEntityService {
 
     private UserRepository userRepository;
 
@@ -16,10 +15,34 @@ public class UserEntityService implements UserEntityInterface {
         this.userRepository = userRepository;
     }
 
-    @Override
-    public void saveUser(List<UserEntity> userEntityList) {
-        for (UserEntity userEntity : userEntityList) {
-            userRepository.save(userEntity);
-        }
+    public User addParameters(User user){
+        return userRepository.save(user);
+    }
+
+    public List<User> getAllUsers(){
+        return userRepository.findAll();
+    }
+
+    public User getUserById(Long id){
+        return userRepository.findById(id).orElse(null);
+    }
+
+    public User editUser(User user){
+        User userUpdate = userRepository.findById(user.getId()).orElse(null);
+        userUpdate.setN(user.getN());
+        userUpdate.setP(user.getP());
+        userUpdate.setN(user.getN());
+        userUpdate.setI(user.getI());
+        userUpdate.setR(user.getR());
+        userUpdate.setTi(user.getTi());
+        userUpdate.setTm(user.getTm());
+        userUpdate.setTs(user.getTs());
+
+        return userRepository.save(user);
+    }
+
+    public String deleteUser(Long id){
+        userRepository.deleteById(id);
+        return "removed";
     }
 }
