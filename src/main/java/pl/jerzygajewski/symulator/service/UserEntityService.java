@@ -1,7 +1,9 @@
 package pl.jerzygajewski.symulator.service;
 
 import org.springframework.stereotype.Service;
+import pl.jerzygajewski.symulator.entity.RecordInfoEntity;
 import pl.jerzygajewski.symulator.entity.User;
+import pl.jerzygajewski.symulator.repository.RecordInfoRepository;
 import pl.jerzygajewski.symulator.repository.UserRepository;
 
 import java.util.List;
@@ -10,12 +12,24 @@ import java.util.List;
 public class UserEntityService {
 
     private UserRepository userRepository;
+    private RecordInfoRepository recordInfoRepository;
 
-    public UserEntityService(UserRepository userRepository) {
+    public UserEntityService(UserRepository userRepository, RecordInfoRepository recordInfoRepository) {
         this.userRepository = userRepository;
+        this.recordInfoRepository = recordInfoRepository;
     }
 
     public User addParameters(User user){
+        for (int i = 0; i < user.getTs(); i++) {
+        RecordInfoEntity recordInfoEntity = new RecordInfoEntity();
+        if(i==0){
+            recordInfoEntity.setPi(user.getI());
+        } else {
+            recordInfoEntity.setPi(user.getI() * Math.round(Math.pow(user.getR(),i)));
+        }
+        recordInfoRepository.save(recordInfoEntity);
+        }
+
         return userRepository.save(user);
     }
 

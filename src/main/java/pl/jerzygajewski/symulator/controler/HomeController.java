@@ -11,35 +11,33 @@ import java.util.List;
 @RestController
 public class HomeController {
 
-    private UserRepository userRepository;
     private UserEntityService userEntityService;
 
-    public HomeController(UserRepository userRepository, UserEntityService userEntityService) {
-        this.userRepository = userRepository;
+    public HomeController(UserEntityService userEntityService) {
         this.userEntityService = userEntityService;
     }
 
-   @PostMapping("/add")
+   @PostMapping("/users")
     public User addUser(@RequestBody User user){
     return userEntityService.addParameters(user);
    }
 
-   @GetMapping("/read")
+   @GetMapping("/users")
     public List<User> userList(){
         return userEntityService.getAllUsers();
    }
 
-   @GetMapping("/read/{id}")
+   @GetMapping("/users/{id}")
     public User userById(@PathVariable Long id){
         return userEntityService.getUserById(id);
    }
 
-   @PutMapping("/edit")
+   @PutMapping("/users")
     public User edit(@PathVariable User user){
         return userEntityService.editUser(user);
    }
 
-   @DeleteMapping("/delete")
+   @DeleteMapping("/users")
     public String delete(@PathVariable Long id){
         return userEntityService.deleteUser(id);
    }
