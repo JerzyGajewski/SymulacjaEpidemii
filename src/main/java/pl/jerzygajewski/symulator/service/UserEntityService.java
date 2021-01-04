@@ -20,17 +20,34 @@ public class UserEntityService {
     }
 
     public User addParameters(User user){
+            int daysGone = user.getTm();
+            long[] sick = new long[user.getTs()];
+            int z = 0;
+            int daysSurvived = user.getTi();
         for (int i = 0; i < user.getTs(); i++) {
         RecordInfoEntity recordInfoEntity = new RecordInfoEntity();
-        if(i==0){
-            recordInfoEntity.setPi(user.getI());
-        } else {
-            recordInfoEntity.setPi(user.getI() * Math.round(Math.pow(user.getR(),i)));
-        }
-        recordInfoRepository.save(recordInfoEntity);
+            sick[i] =  countingPi(user, i, recordInfoEntity);
+           if(i == daysGone){
+                recordInfoEntity.setPm(sick[z] * user.getM());
+                z++;
+                daysGone++;
+            }
+            recordInfoRepository.save(recordInfoEntity);
         }
 
         return userRepository.save(user);
+    }
+
+    private long countingPi(User user, int i, RecordInfoEntity recordInfoEntity) {
+        long count;
+        if(i ==0){
+             count = user.getI();
+             recordInfoEntity.setPi(count);
+        } else {
+             count = user.getI() * Math.round(Math.pow(user.getR(), i));
+             recordInfoEntity.setPi(count);
+        }
+        return count;
     }
 
     public List<User> getAllUsers(){
