@@ -20,7 +20,7 @@ public class User {
     private Long P;
     private Long I;
     private Integer R;
-    private Integer M;
+    private Double M;
     private Integer Ti;
     private Integer Tm;
     private Integer Ts;
