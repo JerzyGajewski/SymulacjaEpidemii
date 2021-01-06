@@ -15,15 +15,15 @@ import java.util.List;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
     private String N;
-    private Long P;
-    private Long I;
-    private Integer R;
-    private Double M;
-    private Integer Ti;
-    private Integer Tm;
-    private Integer Ts;
+    private long P;
+    private long I;
+    private int R;
+    private double M;
+    private int Ti;
+    private int Tm;
+    private int Ts;
 
 //    @OneToMany
 //    private List<RecordInfoEntity> recordList;

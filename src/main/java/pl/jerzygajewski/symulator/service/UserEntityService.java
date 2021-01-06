@@ -15,45 +15,44 @@ public class UserEntityService {
     private UserRepository userRepository;
     private RecordInfoRepository recordInfoRepository;
     private Simulation simulation;
-
     public UserEntityService(UserRepository userRepository, RecordInfoRepository recordInfoRepository) {
         this.userRepository = userRepository;
         this.recordInfoRepository = recordInfoRepository;
     }
 
     public User addParameters(User user){
-            int daysGone = user.getTm();
+            int daysAfterPersonDies = user.getTm();
+            int daysAfterPersonCures = user.getTi();
             long[] sick = new long[user.getTs()];
-            int z = 0;
-            int zz = 0;
-            long o = 0;
-            long p = 0;
+            int daysForPr = 0;
+            int daysForPm = 0;
+            long peopleCured;
             long infected = 0;
-            double mm = user.getM()/100;
-            int daysSurvived = user.getTi();
+            double numberFromM = user.getM()/100;
+
         for (int i = 0; i < user.getTs(); i++) {
         RecordInfoEntity recordInfoEntity = new RecordInfoEntity();
-            sick[i] =  countingPi(user, i);
-           if(i == daysSurvived){
-                double l = sick[zz] * mm;
-                 o = sick[zz] - Math.round(l)+ o;
-                recordInfoEntity.setPr(o);
-                zz++;
-                daysSurvived++;
-            } else recordInfoEntity.setPr(0L);
-           if(i == daysGone){
-               p = Math.round(sick[z] * mm) + p;
-               recordInfoEntity.setPm(p);
-               z++;
-               daysGone++;
-           } else recordInfoEntity.setPm(0L);
+
+        sick[i] =  countingPi(user, i);
+
+           if(i >= daysAfterPersonCures){
+                 peopleCured = sick[daysForPr] - Math.round(sick[daysForPr] * numberFromM) + recordInfoEntity.getPr();
+                recordInfoEntity.setPr(peopleCured);
+               daysForPr++;
+            }
+
+           if(i >= daysAfterPersonDies){
+        long deadPeople = Math.round(sick[daysForPm] * numberFromM);
+              long peopleDied = deadPeople + recordInfoEntity.getPm();
+               recordInfoEntity.setPm(peopleDied);
+               daysForPm++;
+           }
 
            infected = sick[i] - recordInfoEntity.getPm() - recordInfoEntity.getPr() + infected;
            recordInfoEntity.setPi(infected);
            recordInfoEntity.setPv(user.getP() - infected);
             recordInfoRepository.save(recordInfoEntity);
         }
-
         return userRepository.save(user);
     }
 
@@ -67,12 +66,6 @@ public class UserEntityService {
         return count;
     }
 
-    public void Simulation(User user) {
-        for (int i = 0; i < user.getTs(); i++) {
-            RecordInfoEntity simulationFromDatas = simulation.startSimulation(user);
-             recordInfoRepository.save(simulationFromDatas);
-        }
-    }
 
     public List<User> getAllUsers(){
         return userRepository.findAll();

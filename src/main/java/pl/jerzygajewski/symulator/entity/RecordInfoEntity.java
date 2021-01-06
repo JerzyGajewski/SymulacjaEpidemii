@@ -16,9 +16,9 @@ import javax.persistence.Id;
 public class RecordInfoEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private Long Pi;
-    private Long Pv;
-    private Long Pm;
-    private Long Pr;
+    private long id;
+    private long Pi;
+    private long Pv;
+    private long Pm;
+    private long Pr;
 }
