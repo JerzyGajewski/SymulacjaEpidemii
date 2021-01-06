@@ -5,6 +5,7 @@ import pl.jerzygajewski.symulator.entity.RecordInfoEntity;
 import pl.jerzygajewski.symulator.entity.User;
 import pl.jerzygajewski.symulator.repository.RecordInfoRepository;
 import pl.jerzygajewski.symulator.repository.UserRepository;
+import pl.jerzygajewski.util.Simulation;
 
 import java.util.List;
 
@@ -13,6 +14,7 @@ public class UserEntityService {
 
     private UserRepository userRepository;
     private RecordInfoRepository recordInfoRepository;
+    private Simulation simulation;
 
     public UserEntityService(UserRepository userRepository, RecordInfoRepository recordInfoRepository) {
         this.userRepository = userRepository;
@@ -26,11 +28,12 @@ public class UserEntityService {
             int zz = 0;
             long o = 0;
             long p = 0;
+            long infected = 0;
             double mm = user.getM()/100;
             int daysSurvived = user.getTi();
         for (int i = 0; i < user.getTs(); i++) {
         RecordInfoEntity recordInfoEntity = new RecordInfoEntity();
-            sick[i] =  countingPi(user, i, recordInfoEntity);
+            sick[i] =  countingPi(user, i);
            if(i == daysSurvived){
                 double l = sick[zz] * mm;
                  o = sick[zz] - Math.round(l)+ o;
@@ -44,22 +47,31 @@ public class UserEntityService {
                z++;
                daysGone++;
            } else recordInfoEntity.setPm(0L);
+
+           infected = sick[i] - recordInfoEntity.getPm() - recordInfoEntity.getPr() + infected;
+           recordInfoEntity.setPi(infected);
+           recordInfoEntity.setPv(user.getP() - infected);
             recordInfoRepository.save(recordInfoEntity);
         }
 
         return userRepository.save(user);
     }
 
-    private long countingPi(User user, int i, RecordInfoEntity recordInfoEntity) {
+    private long countingPi(User user, int i) {
         long count;
-        if(i ==0){
+        if(i == 0){
              count = user.getI();
-             recordInfoEntity.setPi(count);
         } else {
              count = user.getI() * Math.round(Math.pow(user.getR(), i));
-             recordInfoEntity.setPi(count);
         }
         return count;
+    }
+
+    public void Simulation(User user) {
+        for (int i = 0; i < user.getTs(); i++) {
+            RecordInfoEntity simulationFromDatas = simulation.startSimulation(user);
+             recordInfoRepository.save(simulationFromDatas);
+        }
     }
 
     public List<User> getAllUsers(){
