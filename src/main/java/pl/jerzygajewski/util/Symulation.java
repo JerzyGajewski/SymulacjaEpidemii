@@ -21,30 +21,57 @@ public class Symulation {
 
         for (int i = 0; i < user.getTs(); i++) {
 
-            RecordInfo recordInfo = new RecordInfo();
+            if(recordInfoList.size() > 0 && recordInfoList.get(i-1).getPv() < recordInfoList.get(i-1).getPi()){
+              RecordInfo recordInfo = new RecordInfo();
+                if (i >= user.getTi()) {
+                    peopleCured = sick[daysForPr] - Math.round(sick[daysForPr] * numberFromM) + peopleCured;
+                    recordInfo.setPr(peopleCured);
+                    daysForPr++;
+                }
+                if (i >= user.getTm()) {
+                    long deadPeople = Math.round(sick[daysForPm] * numberFromM);
+                    peopleDied = deadPeople + peopleDied;
+                    recordInfo.setPm(peopleDied);
+                    daysForPm++;
+                }
+                long infected = getInfected(sick, i, recordInfo);
+                long peopleDeadCuredInfected = infected + recordInfo.getPm() + recordInfo.getPr();
+                if (user.getP() - peopleDeadCuredInfected + infected > 0) {
+                    recordInfo.setPi(user.getP() - peopleDeadCuredInfected + infected);
+                } else {
+                recordInfo.setPi(0L);
+                }
+                recordInfo.setPv(0L);
+                recordInfo.setUser(user);
+                recordInfoList.add(recordInfo);
+            } else {
+                RecordInfo recordInfo = new RecordInfo();
 
-            sick[i] = countingPi(user, i);
+                sick[i] = countingPi(user, i);
 
-            if (i >= user.getTi()) {
-                peopleCured = sick[daysForPr] - Math.round(sick[daysForPr] * numberFromM) + peopleCured;
-                recordInfo.setPr(peopleCured);
-                daysForPr++;
+                if (i >= user.getTi()) {
+                    peopleCured = sick[daysForPr] - Math.round(sick[daysForPr] * numberFromM) + peopleCured;
+                    recordInfo.setPr(peopleCured);
+                    daysForPr++;
+                }
+
+                if (i >= user.getTm()) {
+                    long deadPeople = Math.round(sick[daysForPm] * numberFromM);
+                    peopleDied = deadPeople + peopleDied;
+                    recordInfo.setPm(peopleDied);
+                    daysForPm++;
+                }
+                long infected = getInfected(sick, i, recordInfo);
+                recordInfo.setPi(infected);
+
+                long peopleDeadCuredInfected = infected + recordInfo.getPm() + recordInfo.getPr();
+
+                recordInfo.setPv(user.getP() - peopleDeadCuredInfected);
+
+
+                recordInfo.setUser(user);
+                recordInfoList.add(recordInfo);
             }
-
-            if (i >= user.getTm()) {
-                long deadPeople = Math.round(sick[daysForPm] * numberFromM);
-                peopleDied = deadPeople + peopleDied;
-                recordInfo.setPm(peopleDied);
-                daysForPm++;
-            }
-            long infected = getInfected(sick, i, recordInfo);
-            recordInfo.setPi(infected);
-            long peopleDeadCuredInfected = infected + recordInfo.getPm() + recordInfo.getPr();
-//            if(infected > user.getP()){}
-            recordInfo.setPv(user.getP() - peopleDeadCuredInfected);
-            recordInfo.setUser(user);
-            recordInfoList.add(recordInfo);
-
         }
         return recordInfoList;
     }
@@ -66,6 +93,7 @@ public class Symulation {
         } else {
             count = user.getI() * Math.round(Math.pow(user.getR(), i));
         }
+
         return count;
     }
 
