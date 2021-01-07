@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class Symulation {
+public class Simulation {
 
     public List<RecordInfo> startSimulation(User user) {
         List<RecordInfo> recordInfoList = new ArrayList<>();
@@ -21,8 +21,8 @@ public class Symulation {
 
         for (int i = 0; i < user.getTs(); i++) {
 
+            RecordInfo recordInfo = new RecordInfo();
             if(recordInfoList.size() > 0 && recordInfoList.get(i-1).getPv() <= recordInfoList.get(i-1).getPi()){
-              RecordInfo recordInfo = new RecordInfo();
                 if (i >= user.getTi() && recordInfoList.get(i-1).getPi() > recordInfoList.get(i-1).getPr()) {
                     peopleCured = sick[daysForPr] - Math.round(sick[daysForPr] * numberFromM) + peopleCured;
                     recordInfo.setPr(peopleCured);
@@ -49,10 +49,7 @@ public class Symulation {
                 recordInfo.setPi(0L);
                 }
                 recordInfo.setPv(0L);
-                recordInfo.setUser(user);
-                recordInfoList.add(recordInfo);
             } else {
-                RecordInfo recordInfo = new RecordInfo();
 
                 sick[i] = countingPi(user, i);
 
@@ -74,11 +71,9 @@ public class Symulation {
                 long peopleDeadCuredInfected = infected + recordInfo.getPm() + recordInfo.getPr();
 
                 recordInfo.setPv(user.getP() - peopleDeadCuredInfected);
-
-
-                recordInfo.setUser(user);
-                recordInfoList.add(recordInfo);
             }
+            recordInfo.setUser(user);
+            recordInfoList.add(recordInfo);
         }
         return recordInfoList;
     }

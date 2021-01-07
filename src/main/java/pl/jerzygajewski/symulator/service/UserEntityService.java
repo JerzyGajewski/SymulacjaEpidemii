@@ -5,7 +5,7 @@ import pl.jerzygajewski.symulator.entity.RecordInfo;
 import pl.jerzygajewski.symulator.entity.User;
 import pl.jerzygajewski.symulator.repository.RecordInfoRepository;
 import pl.jerzygajewski.symulator.repository.UserRepository;
-import pl.jerzygajewski.util.Symulation;
+import pl.jerzygajewski.util.Simulation;
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -23,8 +23,8 @@ public class UserEntityService {
     public User addParameters(User user) {
         user = userRepository.save(user);
 
-        Symulation symulation = new Symulation();
-        List<RecordInfo> recordInfoList = symulation.startSimulation(user);
+        Simulation simulation = new Simulation();
+        List<RecordInfo> recordInfoList = simulation.startSimulation(user);
         RecordInfo[] arr = new RecordInfo[recordInfoList.size()];
         recordInfoList.toArray(arr);
         for (int i = 0; i < arr.length; i++) {
@@ -44,7 +44,6 @@ public class UserEntityService {
     @Transactional
     public User editUser(User user) {
         User userUpdate = userRepository.findById(user.getId()).orElse(null);
-        userUpdate.setN(user.getN());
         userUpdate.setP(user.getP());
         userUpdate.setN(user.getN());
         userUpdate.setM(user.getM());
@@ -56,9 +55,11 @@ public class UserEntityService {
 
         userUpdate = userRepository.save(userUpdate);
         List<RecordInfo> list = recordInfoRepository.findAllByUser_Id(user.getId());
-
-        Symulation symulation = new Symulation();
-        List<RecordInfo> recordInfoList = symulation.startSimulation(user);
+        for (RecordInfo recordInfo : list) {
+            recordInfoRepository.delete(recordInfo);
+        }
+        Simulation simulation = new Simulation();
+        List<RecordInfo> recordInfoList = simulation.startSimulation(user);
         RecordInfo[] arr = new RecordInfo[recordInfoList.size()];
         recordInfoList.toArray(arr);
         for (RecordInfo recordInfo : arr) {

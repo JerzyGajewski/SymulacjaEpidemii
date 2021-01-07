@@ -35,7 +35,7 @@ public class HomeController {
     }
 
     @PutMapping("/users")
-    public User edit(@RequestBody User user) {
+    public User edit(@Valid @RequestBody User user) {
         return userEntityService.editUser(user);
     }
 
