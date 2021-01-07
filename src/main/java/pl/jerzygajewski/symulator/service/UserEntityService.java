@@ -1,7 +1,7 @@
 package pl.jerzygajewski.symulator.service;
 
 import org.springframework.stereotype.Service;
-import pl.jerzygajewski.symulator.entity.RecordInfoEntity;
+import pl.jerzygajewski.symulator.entity.RecordInfo;
 import pl.jerzygajewski.symulator.entity.User;
 import pl.jerzygajewski.symulator.repository.RecordInfoRepository;
 import pl.jerzygajewski.symulator.repository.UserRepository;
@@ -20,52 +20,64 @@ public class UserEntityService {
         this.recordInfoRepository = recordInfoRepository;
     }
 
-    public User addParameters(User user){
+    public User addParameters(User user) {
         user = userRepository.save(user);
 
         Symulation symulation = new Symulation();
-        List<RecordInfoEntity> recordInfoEntityList = symulation.startSimulation(user);
-        for(RecordInfoEntity recordInfoEntity : recordInfoEntityList){
-            recordInfoRepository.save(recordInfoEntity);
+        List<RecordInfo> recordInfoList = symulation.startSimulation(user);
+        RecordInfo[] arr = new RecordInfo[recordInfoList.size()];
+        recordInfoList.toArray(arr);
+        for (int i = 0; i < arr.length; i++) {
+            recordInfoRepository.save(arr[i]);
         }
-
         return user;
     }
 
-    public List<User> getAllUsers(){
+    public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-    public User getUserById(long id){
+    public User getUserById(long id) {
         return userRepository.findById(id).orElse(null);
     }
 
     @Transactional
-    public User editUser(User user){
+    public User editUser(User user) {
         User userUpdate = userRepository.findById(user.getId()).orElse(null);
         userUpdate.setN(user.getN());
         userUpdate.setP(user.getP());
         userUpdate.setN(user.getN());
+        userUpdate.setM(user.getM());
         userUpdate.setI(user.getI());
         userUpdate.setR(user.getR());
         userUpdate.setTi(user.getTi());
         userUpdate.setTm(user.getTm());
         userUpdate.setTs(user.getTs());
 
+        userUpdate = userRepository.save(userUpdate);
+        List<RecordInfo> list = recordInfoRepository.findAllByUser_Id(user.getId());
+
+        Symulation symulation = new Symulation();
+        List<RecordInfo> recordInfoList = symulation.startSimulation(user);
+        RecordInfo[] arr = new RecordInfo[recordInfoList.size()];
+        recordInfoList.toArray(arr);
+        for (RecordInfo recordInfo : arr) {
+            recordInfoRepository.save(recordInfo);
+        }
 
         return userUpdate;
     }
 
-    public String deleteUser(long id){
-        List<RecordInfoEntity> list = recordInfoRepository.findAllByUser_Id(id);
-        for(RecordInfoEntity recordInfoEntity : list) {
-            recordInfoRepository.delete(recordInfoEntity);
+    public String deleteUser(long id) {
+        List<RecordInfo> list = recordInfoRepository.findAllByUser_Id(id);
+        for (RecordInfo recordInfo : list) {
+            recordInfoRepository.delete(recordInfo);
         }
         userRepository.deleteById(id);
         return "removed";
     }
 
-    public List<RecordInfoEntity> getRecords(long id) {
+    public List<RecordInfo> getRecords(long id) {
         return recordInfoRepository.findAllByUser_Id(id);
     }
 }
