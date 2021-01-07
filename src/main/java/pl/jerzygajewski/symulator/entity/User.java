@@ -25,6 +25,4 @@ public class User {
     private int Tm;
     private int Ts;
 
-//    @OneToMany(cascade = CascadeType.REMOVE)
-//    private List<RecordInfoEntity> recordList;
 }

@@ -5,17 +5,16 @@ import pl.jerzygajewski.symulator.entity.RecordInfoEntity;
 import pl.jerzygajewski.symulator.entity.User;
 import pl.jerzygajewski.symulator.repository.RecordInfoRepository;
 import pl.jerzygajewski.symulator.repository.UserRepository;
-import pl.jerzygajewski.util.Simulation;
+import pl.jerzygajewski.util.Symulation;
 
 import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
 public class UserEntityService {
-
     private UserRepository userRepository;
     private RecordInfoRepository recordInfoRepository;
-    private Simulation simulation;
+
     public UserEntityService(UserRepository userRepository, RecordInfoRepository recordInfoRepository) {
         this.userRepository = userRepository;
         this.recordInfoRepository = recordInfoRepository;
@@ -23,61 +22,15 @@ public class UserEntityService {
 
     public User addParameters(User user){
         user = userRepository.save(user);
-        long[] sick = new long[user.getTs()];
-        int daysForPr = 0;
-        long peopleCured = 0;
-        long peopleDied = 0;
-        double numberFromM = user.getM()/100;
-        int daysForPm = 0;
 
-        for (int i = 0; i < user.getTs(); i++) {
-            RecordInfoEntity recordInfoEntity = new RecordInfoEntity();
-
-            sick[i] =  countingPi(user, i);
-
-            if(i >= user.getTi()){
-                peopleCured = sick[daysForPr] - Math.round(sick[daysForPr] * numberFromM) + peopleCured;
-                recordInfoEntity.setPr(peopleCured);
-                daysForPr++;
-            }
-
-            if(i >= user.getTm()){
-                long deadPeople = Math.round(sick[daysForPm] * numberFromM);
-                peopleDied = deadPeople + peopleDied;
-                recordInfoEntity.setPm(peopleDied);
-                daysForPm++;
-            }
-            long infected = getInfected(sick, i, recordInfoEntity);
-            recordInfoEntity.setPi(infected);
-            recordInfoEntity.setPv(user.getP() - infected);
-            recordInfoEntity.setUser(user);
+        Symulation symulation = new Symulation();
+        List<RecordInfoEntity> recordInfoEntityList = symulation.startSimulation(user);
+        for(RecordInfoEntity recordInfoEntity : recordInfoEntityList){
             recordInfoRepository.save(recordInfoEntity);
         }
 
         return user;
-
     }
-
-    private long getInfected(long[] sick, int i, RecordInfoEntity recordInfoEntity) {
-        long infected;
-        if(i == 0){
-            infected = sick[i] - recordInfoEntity.getPm() - recordInfoEntity.getPr();
-        } else {
-            infected = sick[i -1] + sick[i] - recordInfoEntity.getPm() - recordInfoEntity.getPr();
-        }
-        return infected;
-    }
-
-    private long countingPi(User user, int i) {
-        long count;
-        if(i == 0){
-             count = user.getI();
-        } else {
-             count = user.getI() * Math.round(Math.pow(user.getR(), i));
-        }
-        return count;
-    }
-
 
     public List<User> getAllUsers(){
         return userRepository.findAll();
@@ -86,6 +39,7 @@ public class UserEntityService {
     public User getUserById(long id){
         return userRepository.findById(id).orElse(null);
     }
+
     @Transactional
     public User editUser(User user){
         User userUpdate = userRepository.findById(user.getId()).orElse(null);
@@ -110,7 +64,6 @@ public class UserEntityService {
         userRepository.deleteById(id);
         return "removed";
     }
-
 
     public List<RecordInfoEntity> getRecords(long id) {
         return recordInfoRepository.findAllByUser_Id(id);
