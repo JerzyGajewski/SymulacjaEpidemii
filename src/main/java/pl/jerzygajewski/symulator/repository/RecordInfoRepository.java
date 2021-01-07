@@ -11,4 +11,5 @@ import java.util.List;
 public interface RecordInfoRepository extends JpaRepository<RecordInfoEntity, Long> {
     @Query("select r from RecordInfoEntity r where r.user.id = ?1")
     List<RecordInfoEntity> findAllByUser_Id(long user_id);
+
 }

@@ -29,7 +29,7 @@ public class HomeController {
    }
 
    @GetMapping("/users/{id}")
-    public User userById(@PathVariable Long id){
+    public User userById(@PathVariable long id){
         return userEntityService.getUserById(id);
    }
 
@@ -38,8 +38,8 @@ public class HomeController {
         return userEntityService.editUser(user);
    }
 
-   @DeleteMapping("/users")
-    public String delete(@PathVariable Long id){
+   @DeleteMapping("/users/{id}")
+    public String delete(@PathVariable long id){
         return userEntityService.deleteUser(id);
    }
 

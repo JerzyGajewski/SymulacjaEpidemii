@@ -83,7 +83,7 @@ public class UserEntityService {
         return userRepository.findAll();
     }
 
-    public User getUserById(Long id){
+    public User getUserById(long id){
         return userRepository.findById(id).orElse(null);
     }
     @Transactional
@@ -98,17 +98,21 @@ public class UserEntityService {
         userUpdate.setTm(user.getTm());
         userUpdate.setTs(user.getTs());
 
+
         return userUpdate;
     }
 
-    public String deleteUser(Long id){
+    public String deleteUser(long id){
+        List<RecordInfoEntity> list = recordInfoRepository.findAllByUser_Id(id);
+        for(RecordInfoEntity recordInfoEntity : list) {
+            recordInfoRepository.delete(recordInfoEntity);
+        }
         userRepository.deleteById(id);
         return "removed";
     }
 
 
     public List<RecordInfoEntity> getRecords(long id) {
-        List<RecordInfoEntity> recordInfoList =  recordInfoRepository.findAllByUser_Id(id);
-        return recordInfoList;
+        return recordInfoRepository.findAllByUser_Id(id);
     }
 }
