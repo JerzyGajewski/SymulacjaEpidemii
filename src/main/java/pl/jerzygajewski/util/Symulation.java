@@ -21,18 +21,25 @@ public class Symulation {
 
         for (int i = 0; i < user.getTs(); i++) {
 
-            if(recordInfoList.size() > 0 && recordInfoList.get(i-1).getPv() < recordInfoList.get(i-1).getPi()){
+            if(recordInfoList.size() > 0 && recordInfoList.get(i-1).getPv() <= recordInfoList.get(i-1).getPi()){
               RecordInfo recordInfo = new RecordInfo();
-                if (i >= user.getTi()) {
+                if (i >= user.getTi() && recordInfoList.get(i-1).getPi() > recordInfoList.get(i-1).getPr()) {
                     peopleCured = sick[daysForPr] - Math.round(sick[daysForPr] * numberFromM) + peopleCured;
                     recordInfo.setPr(peopleCured);
                     daysForPr++;
+                } else {
+                    peopleCured = recordInfoList.get(i-1).getPi() - Math.round(recordInfoList.get(i-1).getPi() * numberFromM) + peopleCured;
+                    recordInfo.setPr(peopleCured);
                 }
-                if (i >= user.getTm()) {
+                if (i >= user.getTm() && recordInfoList.get(i-1).getPi() > recordInfoList.get(i-1).getPm()) {
                     long deadPeople = Math.round(sick[daysForPm] * numberFromM);
                     peopleDied = deadPeople + peopleDied;
                     recordInfo.setPm(peopleDied);
                     daysForPm++;
+                } else {
+                    long deadPeople = Math.round(recordInfoList.get(i-1).getPi() * numberFromM);
+                    peopleDied = deadPeople + peopleDied;
+                    recordInfo.setPm(peopleDied);
                 }
                 long infected = getInfected(sick, i, recordInfo);
                 long peopleDeadCuredInfected = infected + recordInfo.getPm() + recordInfo.getPr();
