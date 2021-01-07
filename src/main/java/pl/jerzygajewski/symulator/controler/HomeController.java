@@ -2,6 +2,7 @@ package pl.jerzygajewski.symulator.controler;
 
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import pl.jerzygajewski.symulator.entity.RecordInfoEntity;
 import pl.jerzygajewski.symulator.entity.User;
 import pl.jerzygajewski.symulator.repository.UserRepository;
 import pl.jerzygajewski.symulator.service.UserEntityService;
@@ -42,5 +43,6 @@ public class HomeController {
         return userEntityService.deleteUser(id);
    }
 
-
+   @GetMapping("/results/{id}")
+    public List<RecordInfoEntity> getRecordsByUser_Id(@PathVariable long id){ return userEntityService.getRecords(id);}
 }

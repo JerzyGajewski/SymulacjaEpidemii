@@ -11,6 +11,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
+@Table(name = "info")
 public class RecordInfoEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,5 +22,6 @@ public class RecordInfoEntity {
     private long Pr;
 
     @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
 }

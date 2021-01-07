@@ -22,37 +22,40 @@ public class UserEntityService {
     }
 
     public User addParameters(User user){
-
-            long[] sick = new long[user.getTs()];
-            int daysForPr = 0;
-            long peopleCured = 0;
-            long peopleDied = 0;
-            double numberFromM = user.getM()/100;
-            int daysForPm = 0;
+        user = userRepository.save(user);
+        long[] sick = new long[user.getTs()];
+        int daysForPr = 0;
+        long peopleCured = 0;
+        long peopleDied = 0;
+        double numberFromM = user.getM()/100;
+        int daysForPm = 0;
 
         for (int i = 0; i < user.getTs(); i++) {
-        RecordInfoEntity recordInfoEntity = new RecordInfoEntity();
+            RecordInfoEntity recordInfoEntity = new RecordInfoEntity();
 
-        sick[i] =  countingPi(user, i);
+            sick[i] =  countingPi(user, i);
 
-           if(i >= user.getTi()){
-                 peopleCured = sick[daysForPr] - Math.round(sick[daysForPr] * numberFromM) + peopleCured;
+            if(i >= user.getTi()){
+                peopleCured = sick[daysForPr] - Math.round(sick[daysForPr] * numberFromM) + peopleCured;
                 recordInfoEntity.setPr(peopleCured);
-               daysForPr++;
+                daysForPr++;
             }
 
-           if(i >= user.getTm()){
-        long deadPeople = Math.round(sick[daysForPm] * numberFromM);
-               peopleDied = deadPeople + peopleDied;
-               recordInfoEntity.setPm(peopleDied);
-               daysForPm++;
-           }
+            if(i >= user.getTm()){
+                long deadPeople = Math.round(sick[daysForPm] * numberFromM);
+                peopleDied = deadPeople + peopleDied;
+                recordInfoEntity.setPm(peopleDied);
+                daysForPm++;
+            }
             long infected = getInfected(sick, i, recordInfoEntity);
             recordInfoEntity.setPi(infected);
             recordInfoEntity.setPv(user.getP() - infected);
+            recordInfoEntity.setUser(user);
             recordInfoRepository.save(recordInfoEntity);
         }
-        return userRepository.save(user);
+
+        return user;
+
     }
 
     private long getInfected(long[] sick, int i, RecordInfoEntity recordInfoEntity) {
@@ -101,5 +104,11 @@ public class UserEntityService {
     public String deleteUser(Long id){
         userRepository.deleteById(id);
         return "removed";
+    }
+
+
+    public List<RecordInfoEntity> getRecords(long id) {
+        List<RecordInfoEntity> recordInfoList =  recordInfoRepository.findAllByUser_Id(id);
+        return recordInfoList;
     }
 }
