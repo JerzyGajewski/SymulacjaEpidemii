@@ -7,6 +7,7 @@ import pl.jerzygajewski.symulator.repository.RecordInfoRepository;
 import pl.jerzygajewski.symulator.repository.UserRepository;
 import pl.jerzygajewski.util.Simulation;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
@@ -21,39 +22,47 @@ public class UserEntityService {
     }
 
     public User addParameters(User user){
-            int daysAfterPersonDies = user.getTm();
-            int daysAfterPersonCures = user.getTi();
+
             long[] sick = new long[user.getTs()];
             int daysForPr = 0;
-            int daysForPm = 0;
-            long peopleCured;
-            long infected = 0;
+            long peopleCured = 0;
+            long peopleDied = 0;
             double numberFromM = user.getM()/100;
+            int daysForPm = 0;
 
         for (int i = 0; i < user.getTs(); i++) {
         RecordInfoEntity recordInfoEntity = new RecordInfoEntity();
 
         sick[i] =  countingPi(user, i);
 
-           if(i >= daysAfterPersonCures){
-                 peopleCured = sick[daysForPr] - Math.round(sick[daysForPr] * numberFromM) + recordInfoEntity.getPr();
+           if(i >= user.getTi()){
+                 peopleCured = sick[daysForPr] - Math.round(sick[daysForPr] * numberFromM) + peopleCured;
                 recordInfoEntity.setPr(peopleCured);
                daysForPr++;
             }
 
-           if(i >= daysAfterPersonDies){
+           if(i >= user.getTm()){
         long deadPeople = Math.round(sick[daysForPm] * numberFromM);
-              long peopleDied = deadPeople + recordInfoEntity.getPm();
+               peopleDied = deadPeople + peopleDied;
                recordInfoEntity.setPm(peopleDied);
                daysForPm++;
            }
-
-           infected = sick[i] - recordInfoEntity.getPm() - recordInfoEntity.getPr() + infected;
-           recordInfoEntity.setPi(infected);
-           recordInfoEntity.setPv(user.getP() - infected);
+            long infected = getInfected(sick, i, recordInfoEntity);
+            recordInfoEntity.setPi(infected);
+            recordInfoEntity.setPv(user.getP() - infected);
             recordInfoRepository.save(recordInfoEntity);
         }
         return userRepository.save(user);
+    }
+
+    private long getInfected(long[] sick, int i, RecordInfoEntity recordInfoEntity) {
+        long infected;
+        if(i == 0){
+            infected = sick[i] - recordInfoEntity.getPm() - recordInfoEntity.getPr();
+        } else {
+            infected = sick[i -1] + sick[i] - recordInfoEntity.getPm() - recordInfoEntity.getPr();
+        }
+        return infected;
     }
 
     private long countingPi(User user, int i) {
@@ -74,7 +83,7 @@ public class UserEntityService {
     public User getUserById(Long id){
         return userRepository.findById(id).orElse(null);
     }
-
+    @Transactional
     public User editUser(User user){
         User userUpdate = userRepository.findById(user.getId()).orElse(null);
         userUpdate.setN(user.getN());
@@ -86,7 +95,7 @@ public class UserEntityService {
         userUpdate.setTm(user.getTm());
         userUpdate.setTs(user.getTs());
 
-        return userRepository.save(user);
+        return userUpdate;
     }
 
     public String deleteUser(Long id){

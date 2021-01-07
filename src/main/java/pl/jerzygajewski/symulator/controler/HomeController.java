@@ -33,7 +33,7 @@ public class HomeController {
    }
 
    @PutMapping("/users")
-    public User edit(@PathVariable User user){
+    public User edit(@RequestBody User user){
         return userEntityService.editUser(user);
    }
 
