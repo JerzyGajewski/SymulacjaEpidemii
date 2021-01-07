@@ -3,8 +3,8 @@ package pl.jerzygajewski.symulator.controler;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pl.jerzygajewski.symulator.entity.RecordInfo;
-import pl.jerzygajewski.symulator.entity.User;
-import pl.jerzygajewski.symulator.service.UserEntityService;
+import pl.jerzygajewski.symulator.entity.StartData;
+import pl.jerzygajewski.symulator.service.StartDataEntityService;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -13,39 +13,39 @@ import java.util.List;
 @Validated
 public class HomeController {
 
-    private UserEntityService userEntityService;
+    private StartDataEntityService startDataEntityService;
 
-    public HomeController(UserEntityService userEntityService) {
-        this.userEntityService = userEntityService;
+    public HomeController(StartDataEntityService startDataEntityService) {
+        this.startDataEntityService = startDataEntityService;
     }
 
     @PostMapping("/users")
-    public User addUser(@Valid @RequestBody User user) {
-        return userEntityService.addParameters(user);
+    public StartData addUser(@Valid @RequestBody StartData startData) {
+        return startDataEntityService.addParameters(startData);
     }
 
     @GetMapping("/users")
-    public List<User> userList() {
-        return userEntityService.getAllUsers();
+    public List<StartData> userList() {
+        return startDataEntityService.getAllUsers();
     }
 
     @GetMapping("/users/{id}")
-    public User userById(@PathVariable long id) {
-        return userEntityService.getUserById(id);
+    public StartData userById(@PathVariable long id) {
+        return startDataEntityService.getUserById(id);
     }
 
     @PutMapping("/users")
-    public User edit(@Valid @RequestBody User user) {
-        return userEntityService.editUser(user);
+    public StartData edit(@Valid @RequestBody StartData startData) {
+        return startDataEntityService.editUser(startData);
     }
 
     @DeleteMapping("/users/{id}")
     public String delete(@PathVariable long id) {
-        return userEntityService.deleteUser(id);
+        return startDataEntityService.deleteUser(id);
     }
 
     @GetMapping("/results/{id}")
     public List<RecordInfo> getRecordsByUser_Id(@PathVariable long id) {
-        return userEntityService.getRecords(id);
+        return startDataEntityService.getRecords(id);
     }
 }

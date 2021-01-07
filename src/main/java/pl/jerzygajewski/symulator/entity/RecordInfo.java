@@ -22,5 +22,5 @@ public class RecordInfo {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private StartData startData;
 }

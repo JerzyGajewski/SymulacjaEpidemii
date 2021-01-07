@@ -14,7 +14,7 @@ import javax.validation.constraints.NotEmpty;
 @Setter
 @NoArgsConstructor
 @Table(name = "sym")
-public class User {
+public class StartData {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
