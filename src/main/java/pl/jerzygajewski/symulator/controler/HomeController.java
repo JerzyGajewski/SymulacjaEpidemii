@@ -44,7 +44,7 @@ public class HomeController {
         return startDataEntityService.deleteStartData(id);
     }
 
-    @GetMapping("/results/{id}")
+    @GetMapping("/datas/results/{id}")
     public List<RecordInfo> getRecordsByUser_Id(@PathVariable long id) {
         return startDataEntityService.getRecords(id);
     }
