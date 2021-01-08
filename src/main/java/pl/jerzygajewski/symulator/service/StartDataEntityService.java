@@ -33,16 +33,16 @@ public class StartDataEntityService {
         return startData;
     }
 
-    public List<StartData> getAllUsers() {
+    public List<StartData> getAllDatas() {
         return startDataRepository.findAll();
     }
 
-    public StartData getUserById(long id) {
+    public StartData getDataById(long id) {
         return startDataRepository.findById(id).orElse(null);
     }
 
     @Transactional
-    public StartData editUser(StartData startData) {
+    public StartData editStartData(StartData startData) {
         StartData startDataUpdate = startDataRepository.findById(startData.getId()).orElse(null);
         startDataUpdate.setP(startData.getP());
         startDataUpdate.setN(startData.getN());
@@ -54,7 +54,7 @@ public class StartDataEntityService {
         startDataUpdate.setTs(startData.getTs());
 
         startDataUpdate = startDataRepository.save(startDataUpdate);
-        List<RecordInfo> list = recordInfoRepository.findAllByUser_Id(startData.getId());
+        List<RecordInfo> list = recordInfoRepository.findAllByStartData_Id(startData.getId());
         for (RecordInfo recordInfo : list) {
             recordInfoRepository.delete(recordInfo);
         }
@@ -69,8 +69,8 @@ public class StartDataEntityService {
         return startDataUpdate;
     }
 
-    public String deleteUser(long id) {
-        List<RecordInfo> list = recordInfoRepository.findAllByUser_Id(id);
+    public String deleteStartData(long id) {
+        List<RecordInfo> list = recordInfoRepository.findAllByStartData_Id(id);
         for (RecordInfo recordInfo : list) {
             recordInfoRepository.delete(recordInfo);
         }
@@ -79,6 +79,6 @@ public class StartDataEntityService {
     }
 
     public List<RecordInfo> getRecords(long id) {
-        return recordInfoRepository.findAllByUser_Id(id);
+        return recordInfoRepository.findAllByStartData_Id(id);
     }
 }

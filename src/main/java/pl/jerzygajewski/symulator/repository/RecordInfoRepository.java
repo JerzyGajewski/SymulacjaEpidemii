@@ -9,6 +9,6 @@ import java.util.List;
 
 @Repository
 public interface RecordInfoRepository extends JpaRepository<RecordInfo, Long> {
-    @Query("select r from RecordInfo r where r.user.id = ?1")
-    List<RecordInfo> findAllByUser_Id(long user_id);
+    @Query("select r from RecordInfo r where r.startData.id = ?1")
+    List<RecordInfo> findAllByStartData_Id(long user_id);
 }

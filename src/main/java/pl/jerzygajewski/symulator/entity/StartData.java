@@ -8,6 +8,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
+import java.util.List;
 
 @Entity
 @Getter
@@ -35,5 +36,6 @@ public class StartData {
     private int Tm;
     @Min(value = 0, message = "Simulation days (Ts) must be greater than or equal to 0")
     private int Ts;
+
 
 }

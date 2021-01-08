@@ -19,29 +19,29 @@ public class HomeController {
         this.startDataEntityService = startDataEntityService;
     }
 
-    @PostMapping("/users")
+    @PostMapping("/datas")
     public StartData addUser(@Valid @RequestBody StartData startData) {
         return startDataEntityService.addParameters(startData);
     }
 
-    @GetMapping("/users")
+    @GetMapping("/datas")
     public List<StartData> userList() {
-        return startDataEntityService.getAllUsers();
+        return startDataEntityService.getAllDatas();
     }
 
-    @GetMapping("/users/{id}")
+    @GetMapping("/datas/{id}")
     public StartData userById(@PathVariable long id) {
-        return startDataEntityService.getUserById(id);
+        return startDataEntityService.getDataById(id);
     }
 
-    @PutMapping("/users")
+    @PutMapping("/datas")
     public StartData edit(@Valid @RequestBody StartData startData) {
-        return startDataEntityService.editUser(startData);
+        return startDataEntityService.editStartData(startData);
     }
 
-    @DeleteMapping("/users/{id}")
+    @DeleteMapping("/datas/{id}")
     public String delete(@PathVariable long id) {
-        return startDataEntityService.deleteUser(id);
+        return startDataEntityService.deleteStartData(id);
     }
 
     @GetMapping("/results/{id}")
