@@ -14,6 +14,10 @@ import javax.persistence.*;
 public class RecordInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    Pi - number of sick people
+//    Pv - number of healthy people before infection
+//    Pm - number of dead people
+//    Pr - number of people who recovered and acquired immunity
     private long id;
     private long Pi;
     private long Pv;
